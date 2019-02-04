@@ -17,6 +17,11 @@ const circleNotesData = Object.values(circleNotesDataByNote)
 const colorScale = d3.scaleLinear().domain([0, circleNotesData.length]).range(['blue', 'red'])
 const height = 500, width = 500
 const svg = d3.select('#canvas').append('svg').attr('width', 900).attr('height', 900)
+const songPathGenerator = d3.line()
+	.curve(d3.curveLinear)
+	// .x(function (d) { return x(d.x); })
+	// .y(function (d) { return y(d.y); });
+
 // Globals
 let indexType = 'fifthsIndex'
 let noteGroup, songPath;
@@ -76,21 +81,39 @@ function updateVis() {
 	
 	if (!songPath) {
 		songPath = svg.append('path')
+			.classed('song-path', true)
 			.attr('fill', 'none')
 			.attr('stroke', 'blue')
 			.attr('stroke-width', 3)
-		const coords = chordsToCoords(CHORD_ARRAY)
-		const pathData = d3.line()(coords)
-		svg.select('path')
+		
+		const pathData = getSongPathData(CHORD_ARRAY)
+		songPath
 			.attr('d', pathData)
 	}
 	
 	// Transition to updated state
 	noteGroup.transition().duration(1000)
-		.delay((d, i) => i * 50)
+		// .delay((d, i) => i * 50)
 		.attr("transform", d => `translate(${d.x},${d.y})`)
 	
 	
+	songPath
+		.transition()
+		.duration(1000)
+		// .delay(d => {
+		//
+		// 	return i * 50
+		// })
+		.attrTween('d', function (d) { // SOURCE/PLUGIN: https://github.com/pbeshai/d3-interpolate-path
+			var previous = d3.select(this).attr('d');
+			var current = getSongPathData(CHORD_ARRAY);
+			return d3.interpolatePath(previous, current);
+		});
+}
+
+function getSongPathData(chords) {
+	const coords = chordsToCoords(chords)
+	return songPathGenerator(coords)
 }
 
 updateVis()
