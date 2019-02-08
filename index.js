@@ -19,19 +19,29 @@ const height = 500, width = 500
 const svg = d3.select('#canvas').append('svg').attr('width', 900).attr('height', 900)
 const songPathGenerator = d3.line()
 	.curve(d3.curveLinear)
-	// .x(function (d) { return x(d.x); })
-	// .y(function (d) { return y(d.y); });
+	.x(chord => getChordXY(chord).x)
+	.y(chord => getChordXY(chord).y);
+
+function getChordXY(chord) {
+	const [x, y] = getCoordsFromIndex(circleNotesDataByNote[chord.root][indexType])
+	return {x, y}
+}
 
 // Globals
 let indexType = 'fifthsIndex'
 let noteGroup, songPath;
-const CHORD_ARRAY = ['A', 'D', 'G', 'C', 'Fsharp', 'B', 'E']
+const CHORD_ARRAY = [
+	{root: 'A'},
+	{root: 'D'},
+	{root: 'G'},
+	{root: 'C'},
+	{root: 'Fsharp'},
+	{root: 'B'},
+	{root: 'E'},
+]
 
 
 // Helper functions:
-function chordsToCoords(chords) {
-	return chords.map(chord => getCoordsFromIndex(circleNotesDataByNote[chord][indexType]))
-}
 
 
 // Coord Calculations
@@ -50,7 +60,6 @@ function updateCircleNotesData(circleNotesData) {
 		d.y = y
 		d.color = colorScale(d['chromaticIndex']) // Keep color constant regardless of fifths or chromatic
 	})
-	console.log('DONE UPDATING:', circleNotesData)
 }
 
 
@@ -86,34 +95,27 @@ function updateVis() {
 			.attr('stroke', 'blue')
 			.attr('stroke-width', 3)
 		
-		const pathData = getSongPathData(CHORD_ARRAY)
+		const s = songPathGenerator(CHORD_ARRAY)
+		console.log(s)
 		songPath
-			.attr('d', pathData)
+			.attr('d', s)
 	}
 	
 	// Transition to updated state
 	noteGroup.transition().duration(1000)
-		// .delay((d, i) => i * 50)
+	// .delay((d, i) => i * 50) // To use this in concert with Chords, we'd need to loop over each point, generating a new line
 		.attr("transform", d => `translate(${d.x},${d.y})`)
 	
 	
 	songPath
 		.transition()
 		.duration(1000)
-		// .delay(d => {
-		//
-		// 	return i * 50
-		// })
-		.attrTween('d', function (d) { // SOURCE/PLUGIN: https://github.com/pbeshai/d3-interpolate-path
-			var previous = d3.select(this).attr('d');
-			var current = getSongPathData(CHORD_ARRAY);
+		.attrTween('d', d => { // SOURCE/PLUGIN: https://github.com/pbeshai/d3-interpolate-path
+			const previous = d3.select(this).attr('d');
+			const current = songPathGenerator(CHORD_ARRAY);
 			return d3.interpolatePath(previous, current);
 		});
 }
 
-function getSongPathData(chords) {
-	const coords = chordsToCoords(chords)
-	return songPathGenerator(coords)
-}
 
 updateVis()
