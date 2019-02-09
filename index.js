@@ -103,16 +103,16 @@ function updateVis() {
 	
 	// Transition to updated state
 	noteGroup.transition().duration(1000)
-	// .delay((d, i) => i * 50) // To use this in concert with Chords, we'd need to loop over each point, generating a new line
+	// .delay((d, i) => i * 50) // To coordinate w/ songPath, we'd need to transition to a NEW line for each point in the line
 		.attr("transform", d => `translate(${d.x},${d.y})`)
 	
 	
 	songPath
 		.transition()
 		.duration(1000)
-		.attrTween('d', d => { // SOURCE/PLUGIN: https://github.com/pbeshai/d3-interpolate-path
-			const previous = d3.select(this).attr('d');
-			const current = songPathGenerator(CHORD_ARRAY);
+		.attrTween('d', function (d) { // SOURCE/PLUGIN: https://github.com/pbeshai/d3-interpolate-path
+			var previous = d3.select(this).attr('d');
+			var current = songPathGenerator(CHORD_ARRAY);
 			return d3.interpolatePath(previous, current);
 		});
 }
