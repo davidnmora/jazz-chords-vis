@@ -106,16 +106,33 @@ function updateVis() {
 	// .delay((d, i) => i * 50) // To coordinate w/ songPath, we'd need to transition to a NEW line for each point in the line
 		.attr("transform", d => `translate(${d.x},${d.y})`)
 	
-	
+	// If paths exists, transition it to this new state.
 	songPath
 		.transition()
 		.duration(1000)
 		.attrTween('d', function (d) { // SOURCE/PLUGIN: https://github.com/pbeshai/d3-interpolate-path
 			var previous = d3.select(this).attr('d');
 			var current = songPathGenerator(CHORD_ARRAY);
+			
 			return d3.interpolatePath(previous, current);
-		});
+		})
+		.on('end', _ => runPathDrawingAnimation(songPath))
+		
+	
+
 }
 
+function runPathDrawingAnimation(songPath) {
+	console.log('draw')
+	var totalLength = songPath.node().getTotalLength();
+	
+	songPath
+		.attr("stroke-dasharray", totalLength + " " + totalLength)
+		.attr("stroke-dashoffset", totalLength)
+		.transition()
+		.duration(2000)
+		.ease(d3.easeLinear)
+		.attr("stroke-dashoffset", 0)
+}
 
 updateVis()
