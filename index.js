@@ -13,10 +13,15 @@ const circleNotesDataByNote = {
 	'Bflat': {note: 'Bflat', fifthsIndex: 10, chromaticIndex: 10,},
 	'F': {note: 'F', fifthsIndex: 11, chromaticIndex: 5,},
 };
+const colors = {
+	text: '#bdc3c7',
+	line: '#2ecc71',
+	canvas: '#2c3e50',
+}
 const circleNotesData = Object.values(circleNotesDataByNote)
 const colorScale = d3.scaleLinear().domain([0, circleNotesData.length]).range(['blue', 'red'])
 const height = 500, width = 500
-const svg = d3.select('#canvas').append('svg').attr('width', 900).attr('height', 900)
+const svg = d3.select('#canvas').append('svg').attr('width', 900).attr('height', 900).style('background-color', colors.canvas)
 const songPathGenerator = d3.line()
 	.curve(d3.curveLinear)
 	.x(chord => getChordXY(chord).x)
@@ -30,15 +35,36 @@ function getChordXY(chord) {
 // Globals
 let indexType = 'fifthsIndex'
 let noteGroup, songPath;
-const CHORD_ARRAY = [
+// const CHORD_ARRAY = [
+// 	{root: 'A'},
+// 	{root: 'D'},
+// 	{root: 'G'},
+// 	{root: 'C'},
+// 	{root: 'Fsharp'},
+// 	{root: 'B'},
+// 	{root: 'E'},
+// ]
+
+
+const GUITAR_STRINGS = [
+	{root: 'E'},
+	{root: 'A'},
+	{root: 'D'},
+	{root: 'G'},
+	{root: 'B'},
+	{root: 'E'},
+]
+
+const CIRCLE_OF_FOURTHS_FROM_E = [
+	{root: 'E'},
 	{root: 'A'},
 	{root: 'D'},
 	{root: 'G'},
 	{root: 'C'},
-	{root: 'Fsharp'},
-	{root: 'B'},
-	{root: 'E'},
+	{root: 'F'},
 ]
+
+const CHORD_ARRAY = GUITAR_STRINGS
 
 
 // Helper functions:
@@ -79,20 +105,22 @@ function updateVis() {
 		
 		const noteCircle = noteGroup
 			.append("circle")
-			.attr("r", 20)
+			.attr("r", d => d.note === 'E' ? 20 : 0)
 			.attr("fill", d => d.color)
 			.on('mouseover', d => console.log(d));
 		
 		const noteLabel = noteGroup
 			.append("text")
-			.text(d => d.note)
+			.attr('font-size', 46)
+			.attr('fill', colors.text)
+			.text(d => d.note.replace('sharp', '#').replace('flat', 'b'))
 	}
 	
 	if (!songPath) {
 		songPath = svg.append('path')
 			.classed('song-path', true)
 			.attr('fill', 'none')
-			.attr('stroke', 'blue')
+			.attr('stroke', colors.line)
 			.attr('stroke-width', 3)
 		
 		const s = songPathGenerator(CHORD_ARRAY)
@@ -123,6 +151,7 @@ function updateVis() {
 }
 
 function runPathDrawingAnimation(songPath) {
+	// https://observablehq.com/@lemonnish/svg-path-animations-d3-transition
 	console.log('draw')
 	var totalLength = songPath.node().getTotalLength();
 	
