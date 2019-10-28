@@ -28,22 +28,43 @@ const songPathGenerator = d3.line()
 	.y(chord => getChordXY(chord).y);
 
 function getChordXY(chord) {
-	const [x, y] = getCoordsFromIndex(circleNotesDataByNote[chord.root][indexType])
+	const [x, y] = getCoordsFromIndex(circleNotesDataByNote[chord.root][indexType], true)
 	return {x, y}
 }
 
 // Globals
 let indexType = 'fifthsIndex'
 let noteGroup, songPath;
-// const CHORD_ARRAY = [
-// 	{root: 'A'},
-// 	{root: 'D'},
-// 	{root: 'G'},
-// 	{root: 'C'},
-// 	{root: 'Fsharp'},
-// 	{root: 'B'},
-// 	{root: 'E'},
-// ]
+const AUTUMN_LEAVES = [
+	// A
+	{root: 'A'},
+	{root: 'D'},
+	{root: 'G'},
+	{root: 'C'},
+	{root: 'Fsharp'},
+	{root: 'B'},
+	{root: 'E'},
+	
+	// B
+	{root: 'Fsharp'},
+	{root: 'B'},
+	{root: 'E'},
+	
+	{root: 'A'},
+	{root: 'D'},
+	{root: 'G'},
+	
+	{root: 'Fsharp'},
+	{root: 'B'},
+	{root: 'E'},
+	{root: 'Eflat'},
+	{root: 'D'},
+	{root: 'Csharp'},
+	{root: 'C'},
+	{root: 'B'},
+	{root: 'E'},
+
+]
 
 
 const GUITAR_STRINGS = [
@@ -64,19 +85,53 @@ const CIRCLE_OF_FOURTHS_FROM_E = [
 	{root: 'F'},
 ]
 
-const CHORD_ARRAY = GUITAR_STRINGS
+const IM_YOURS_CHORDS = [
+	{root: 'G'},
+	{root: 'D'},
+	{root: 'A'},
+	{root: 'C'},
+]
+
+const ROLLING_IN_THE_DEEP_VERSE = [
+	// verse
+	{root: 'A'},
+	{root: 'E'},
+	{root: 'G'},
+	{root: 'E'},
+	{root: 'G'},
+	{root: 'A'},
+	{root: 'E'},
+	{root: 'G'},
+	{root: 'E'},
+	{root: 'G'},
+	
+	// chorus
+	{root: 'A'},
+	{root: 'G'},
+	{root: 'F'},
+	{root: 'G'},
+	{root: 'A'},
+	{root: 'G'},
+	{root: 'F'},
+	{root: 'G'},
+	
+]
+
+
+const CHORD_ARRAY = AUTUMN_LEAVES
 
 
 // Helper functions:
 
 
 // Coord Calculations
-function getCoordsFromIndex(index) {
+function getCoordsFromIndex(index, jitter = false) {
 	const increment = 2 * Math.PI / circleNotesData.length
 	const angle = increment * index
 	const radius = 200
 	const [x, y] = d3.pointRadial(angle, radius)
-	return [x + width/2, y + height/2]
+	const _jitter = jitter ? Math.random() * 16 : 0
+	return [x + width/2 + _jitter, y + height/2 + _jitter]
 }
 
 function updateCircleNotesData(circleNotesData) {
@@ -121,7 +176,10 @@ function updateVis() {
 			.classed('song-path', true)
 			.attr('fill', 'none')
 			.attr('stroke', colors.line)
-			.attr('stroke-width', 3)
+			.attr('stroke-width', 2)
+			.attr('stroke-opacity', 0.2)
+			.style('stroke-linecap','round')
+			.style("stroke-linejoin","round")
 		
 		const s = songPathGenerator(CHORD_ARRAY)
 		console.log(s)
