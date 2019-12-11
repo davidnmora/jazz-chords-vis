@@ -1,3 +1,4 @@
-const viz = new ChordViz(CHORD_PROGRESSIONS.AUTUMN_LEAVES, '#vis-container')
+const autumnLeaves = new ChordViz(CHORD_PROGRESSIONS.AUTUMN_LEAVES, '#vis-container')
 
-viz.toggleCircle()
+const rolling = new ChordViz(CHORD_PROGRESSIONS.ROLLING_IN_THE_DEEP_VERSE, '#vis-container')
+

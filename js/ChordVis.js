@@ -23,20 +23,26 @@ const CIRCLE_OF_FOURTHS_TRANSITION_DURATION = 1000
 const PATH_DRAWING_ANIMATION_DURATION = 3000
 
 const CIRCLE_NOTES_DATA = Object.values(CIRCLE_NOTES_DATA_BY_NOTE)
-const colorScale = d3.scaleLinear().domain([0, CIRCLE_NOTES_DATA.length]).range(['blue', 'red'])
-const height = 500, width = 500
+const COLOR_SCALE = d3.scaleLinear().domain([0, CIRCLE_NOTES_DATA.length]).range(['blue', 'red'])
+const CANVAS_HEIGHT = 500, CANVAS_WIDTH = 500
 
 
 class ChordViz extends Object {
-	constructor(CHORD_ARRAY, visContainer) {
+	constructor(CHORD_ARRAY, visContainerSelector) {
 		super()
 		console.log('CONSTRUCTOR')
 		this.CHORD_ARRAY = CHORD_ARRAY
-		this.svg = d3.select(visContainer).append('svg').attr('width', width).attr('height', height).style('background-color', colors.canvas)
+		
+		// Add elements to DOM
+		this.visContainer = d3.select(visContainerSelector)
+		
 		this.indexType = 'fifthsIndex'
-		d3.select('#circle-type').html(this.indexType).on('click', () => {
+		this.toggleButton = this.visContainer.append('button').style('display', 'block').html(this.indexType).on('click', () => {
 			this.toggleCircle()
 		})
+		
+		this.svg = this.visContainer.append('svg').attr('width', CANVAS_WIDTH).attr('height', CANVAS_HEIGHT).style('background-color', colors.canvas)
+		
 		
 		this.updateCircleNotesData()
 		
@@ -91,7 +97,7 @@ class ChordViz extends Object {
 		const radius = 200
 		const [x, y] = d3.pointRadial(angle, radius)
 		const _jitter = jitter ? Math.random() * 16 : 0
-		return [x + width/2 + _jitter, y + height/2 + _jitter]
+		return [x + CANVAS_WIDTH/2 + _jitter, y + CANVAS_HEIGHT/2 + _jitter]
 	}
 	
 	updateCircleNotesData() {
@@ -99,7 +105,7 @@ class ChordViz extends Object {
 			const [x, y] = this.getCoordsFromIndex(d[this.indexType])
 			d.x = x
 			d.y = y
-			d.color = colorScale(d['chromaticIndex']) // Keep color constant regardless of fifths or chromatic
+			d.color = COLOR_SCALE(d['chromaticIndex']) // Keep color constant regardless of fifths or chromatic
 		})
 	}
 	
@@ -120,7 +126,7 @@ class ChordViz extends Object {
 		console.log('TOGGLING')
 		
 		this.indexType = this.indexType === 'chromaticIndex' ? 'fifthsIndex' : 'chromaticIndex'
-		d3.select('#circle-type').html(this.indexType)
+		this.toggleButton.html(this.indexType)
 		
 		// Transition to updated state
 		this.noteGroup.transition().duration(CIRCLE_OF_FOURTHS_TRANSITION_DURATION)
