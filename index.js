@@ -39,90 +39,10 @@ function getChordXY(chord) {
 // Globals
 let indexType = 'fifthsIndex'
 let noteGroup, songPath;
-const AUTUMN_LEAVES = [
-	// A
-	{root: 'A'},
-	{root: 'D'},
-	{root: 'G'},
-	{root: 'C'},
-	{root: 'Fsharp'},
-	{root: 'B'},
-	{root: 'E'},
-	
-	// B
-	{root: 'Fsharp'},
-	{root: 'B'},
-	{root: 'E'},
-	
-	{root: 'A'},
-	{root: 'D'},
-	{root: 'G'},
-	
-	{root: 'Fsharp'},
-	{root: 'B'},
-	{root: 'E'},
-	{root: 'Eflat'},
-	{root: 'D'},
-	{root: 'Csharp'},
-	{root: 'C'},
-	{root: 'B'},
-	{root: 'E'},
-
-]
 
 
-const GUITAR_STRINGS = [
-	{root: 'E'},
-	{root: 'A'},
-	{root: 'D'},
-	{root: 'G'},
-	{root: 'B'},
-	{root: 'E'},
-]
 
-const CIRCLE_OF_FOURTHS_FROM_E = [
-	{root: 'E'},
-	{root: 'A'},
-	{root: 'D'},
-	{root: 'G'},
-	{root: 'C'},
-	{root: 'F'},
-]
-
-const IM_YOURS_CHORDS = [
-	{root: 'G'},
-	{root: 'D'},
-	{root: 'A'},
-	{root: 'C'},
-]
-
-const ROLLING_IN_THE_DEEP_VERSE = [
-	// verse
-	{root: 'A'},
-	{root: 'E'},
-	{root: 'G'},
-	{root: 'E'},
-	{root: 'G'},
-	{root: 'A'},
-	{root: 'E'},
-	{root: 'G'},
-	{root: 'E'},
-	{root: 'G'},
-	
-	// chorus
-	{root: 'A'},
-	{root: 'G'},
-	{root: 'F'},
-	{root: 'G'},
-	{root: 'A'},
-	{root: 'G'},
-	{root: 'F'},
-	{root: 'G'},
-	
-]
-
-
-const CHORD_ARRAY = AUTUMN_LEAVES
+const CHORD_ARRAY = CHORD_PROGRESSIONS.AUTUMN_LEAVES
 
 
 // Helper functions:
