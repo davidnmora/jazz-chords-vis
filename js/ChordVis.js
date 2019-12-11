@@ -28,10 +28,10 @@ const CANVAS_HEIGHT = 500, CANVAS_WIDTH = 500
 
 
 class ChordViz extends Object {
-	constructor(CHORD_ARRAY, visContainerSelector) {
+	constructor(chordArray, visContainerSelector) {
 		super()
 		console.log('CONSTRUCTOR')
-		this.CHORD_ARRAY = CHORD_ARRAY
+		this.chordArray = chordArray
 		
 		// Add elements to DOM
 		this.visContainer = d3.select(visContainerSelector)
@@ -44,7 +44,7 @@ class ChordViz extends Object {
 		this.svg = this.visContainer.append('svg').attr('width', CANVAS_WIDTH).attr('height', CANVAS_HEIGHT).style('background-color', colors.canvas)
 		
 		
-		this.updateCircleNotesData()
+		this._updateCircleNotesData()
 		
 		
 		this.noteGroup = this.svg.selectAll('.note-group')
@@ -74,24 +74,24 @@ class ChordViz extends Object {
 			.style('stroke-linecap','round')
 			.style("stroke-linejoin","round")
 		
-		const s = this.songPathGenerator(CHORD_ARRAY)
+		const s = this._songPathGenerator(chordArray)
 		this.songPath
 			.attr('d', s)
 	}
 	
-	songPathGenerator = d3.line()
+	_songPathGenerator = d3.line()
 		.curve(d3.curveLinear)
-		.x(chord => this.getChordXY(chord).x)
-		.y(chord => this.getChordXY(chord).y);
+		.x(chord => this._getChordXY(chord).x)
+		.y(chord => this._getChordXY(chord).y);
 	
 	
-	getChordXY(chord) {
-		const [x, y] = this.getCoordsFromIndex(CIRCLE_NOTES_DATA_BY_NOTE[chord.root][this.indexType], true)
+	_getChordXY(chord) {
+		const [x, y] = this._getCoordsFromIndex(CIRCLE_NOTES_DATA_BY_NOTE[chord.root][this.indexType], true)
 		return {x, y}
 	}
 
 // Coord Calculations
-	getCoordsFromIndex(index, jitter = false) {
+	_getCoordsFromIndex(index, jitter = false) {
 		const increment = 2 * Math.PI / CIRCLE_NOTES_DATA.length
 		const angle = increment * index
 		const radius = 200
@@ -100,9 +100,9 @@ class ChordViz extends Object {
 		return [x + CANVAS_WIDTH/2 + _jitter, y + CANVAS_HEIGHT/2 + _jitter]
 	}
 	
-	updateCircleNotesData() {
+	_updateCircleNotesData() {
 		CIRCLE_NOTES_DATA.forEach(d => {
-			const [x, y] = this.getCoordsFromIndex(d[this.indexType])
+			const [x, y] = this._getCoordsFromIndex(d[this.indexType])
 			d.x = x
 			d.y = y
 			d.color = COLOR_SCALE(d['chromaticIndex']) // Keep color constant regardless of fifths or chromatic
@@ -135,17 +135,16 @@ class ChordViz extends Object {
 		
 		
 		// If paths exists, transition it to this new state.
-		const songPathGeneratorRef = this.songPathGenerator
-		const CHORD_ARRAY_ref = this.CHORD_ARRAY
+		const _songPathGeneratorRef = this._songPathGenerator
+		const chordArray_ref = this.chordArray
 		this.songPath
 			.transition()
 			.duration(CIRCLE_OF_FOURTHS_TRANSITION_DURATION)
 			.attrTween('d', function (d) { // SOURCE/PLUGIN: https://github.com/pbeshai/d3-interpolate-path
 				var previous = d3.select(this).attr('d');
-				var current = songPathGeneratorRef(CHORD_ARRAY_ref);
+				var current = _songPathGeneratorRef(chordArray_ref);
 				
 				return d3.interpolatePath(previous, current);
 			})
-			.on('end', _ => this.runPathDrawingAnimation())
 	}
 }
