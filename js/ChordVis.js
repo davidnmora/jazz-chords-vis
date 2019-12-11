@@ -32,6 +32,11 @@ class ChordViz extends Object {
 		super()
 		console.log('CONSTRUCTOR')
 		this.chordArray = chordArray
+		this.songPathGenerator = d3.line()
+			.curve(d3.curveLinear)
+			.x(chord => this._getChordXY(chord).x)
+			.y(chord => this._getChordXY(chord).y);
+		
 		
 		// Add elements to DOM
 		this.visContainer = d3.select(visContainerSelector)
@@ -39,6 +44,9 @@ class ChordViz extends Object {
 		this.indexType = 'fifthsIndex'
 		this.toggleButton = this.visContainer.append('button').style('display', 'block').html(this.indexType).on('click', () => {
 			this.toggleCircle()
+		})
+		this.runPathDrawingAnimationButton = this.visContainer.append('button').style('display', 'block').html('redraw').on('click', () => {
+			this.runPathDrawingAnimation()
 		})
 		
 		this.svg = this.visContainer.append('svg').attr('width', CANVAS_WIDTH).attr('height', CANVAS_HEIGHT).style('background-color', colors.canvas)
@@ -74,16 +82,10 @@ class ChordViz extends Object {
 			.style('stroke-linecap','round')
 			.style("stroke-linejoin","round")
 		
-		const s = this._songPathGenerator(chordArray)
+		const s = this.songPathGenerator(chordArray)
 		this.songPath
 			.attr('d', s)
 	}
-	
-	_songPathGenerator = d3.line()
-		.curve(d3.curveLinear)
-		.x(chord => this._getChordXY(chord).x)
-		.y(chord => this._getChordXY(chord).y);
-	
 	
 	_getChordXY(chord) {
 		const [x, y] = this._getCoordsFromIndex(CIRCLE_NOTES_DATA_BY_NOTE[chord.root][this.indexType], true)
@@ -135,14 +137,14 @@ class ChordViz extends Object {
 		
 		
 		// If paths exists, transition it to this new state.
-		const _songPathGeneratorRef = this._songPathGenerator
+		const songPathGeneratorRef = this.songPathGenerator
 		const chordArray_ref = this.chordArray
 		this.songPath
 			.transition()
 			.duration(CIRCLE_OF_FOURTHS_TRANSITION_DURATION)
 			.attrTween('d', function (d) { // SOURCE/PLUGIN: https://github.com/pbeshai/d3-interpolate-path
 				var previous = d3.select(this).attr('d');
-				var current = _songPathGeneratorRef(chordArray_ref);
+				var current = songPathGeneratorRef(chordArray_ref);
 				
 				return d3.interpolatePath(previous, current);
 			})
