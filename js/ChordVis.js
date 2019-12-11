@@ -13,7 +13,7 @@ const CIRCLE_NOTES_DATA_BY_NOTE = {
 	'Bflat': {note: 'Bflat', fifthsIndex: 10, chromaticIndex: 10,},
 	'F': {note: 'F', fifthsIndex: 11, chromaticIndex: 5,},
 };
-const colors = {
+const COLORS = {
 	text: '#bdc3c7',
 	line: '#2ecc71',
 	canvas: '#2c3e50',
@@ -39,17 +39,17 @@ class ChordViz extends Object {
 		
 		
 		// Add elements to DOM
-		this.visContainer = d3.select(visContainerSelector)
+		this.visDivWrapper = d3.select(visContainerSelector).append('div').style('background-color', COLORS.canvas)
 		
 		this.indexType = 'fifthsIndex'
-		this.toggleButton = this.visContainer.append('button').style('display', 'block').html(this.indexType).on('click', () => {
+		this.toggleButton = this.visDivWrapper.append('button').style('display', 'block').html(this.indexType).on('click', () => {
 			this.toggleCircle()
 		})
-		this.runPathDrawingAnimationButton = this.visContainer.append('button').style('display', 'block').html('redraw').on('click', () => {
+		this.runPathDrawingAnimationButton = this.visDivWrapper.append('button').style('display', 'block').html('redraw').on('click', () => {
 			this.runPathDrawingAnimation()
 		})
 		
-		this.svg = this.visContainer.append('svg').attr('width', CANVAS_WIDTH).attr('height', CANVAS_HEIGHT).style('background-color', colors.canvas)
+		this.svg = this.visDivWrapper.append('svg').attr('width', CANVAS_WIDTH).attr('height', CANVAS_HEIGHT).style('background-color', COLORS.canvas)
 		
 		
 		this._updateCircleNotesData()
@@ -69,14 +69,14 @@ class ChordViz extends Object {
 		const noteLabel = this.noteGroup
 			.append("text")
 			.attr('font-size', 46)
-			.attr('fill', colors.text)
+			.attr('fill', COLORS.text)
 			.text(d => d.note.replace('sharp', '#').replace('flat', 'b'))
 		
 		
 		this.songPath = this.svg.append('path')
 			.classed('song-path', true)
 			.attr('fill', 'none')
-			.attr('stroke', colors.line)
+			.attr('stroke', COLORS.line)
 			.attr('stroke-width', 2)
 			.attr('stroke-opacity', 0.2)
 			.style('stroke-linecap','round')
