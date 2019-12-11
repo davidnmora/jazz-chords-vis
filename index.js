@@ -86,7 +86,6 @@ function updateVis() {
 			.append("circle")
 			.attr("r", d => d.note === 'E' ? 20 : 0)
 			.attr("fill", d => d.color)
-			.on('mouseover', d => console.log(d));
 		
 		const noteLabel = noteGroup
 			.append("text")
@@ -106,7 +105,6 @@ function updateVis() {
 			.style("stroke-linejoin","round")
 		
 		const s = songPathGenerator(CHORD_ARRAY)
-		console.log(s)
 		songPath
 			.attr('d', s)
 	}
@@ -135,7 +133,6 @@ function updateVis() {
 
 function runPathDrawingAnimation(songPath) {
 	// https://observablehq.com/@lemonnish/svg-path-animations-d3-transition
-	console.log('draw')
 	var totalLength = songPath.node().getTotalLength();
 	
 	songPath
@@ -148,3 +145,19 @@ function runPathDrawingAnimation(songPath) {
 }
 
 updateVis()
+
+
+class ChordViz extends Object {
+	constructor(CHORD_ARRAY, containerSelector) {
+		super()
+		console.log('CONSTRUCTOR')
+	}
+	
+	toggleCircle() {
+		console.log('TOGGLING')
+	}
+}
+
+const viz = new ChordViz('suppp')
+
+viz.toggleCircle()
