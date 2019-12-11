@@ -18,6 +18,10 @@ const colors = {
 	line: '#2ecc71',
 	canvas: '#2c3e50',
 }
+
+const CIRCLE_OF_FOURTHS_TRANSITION_DURATION = 1000
+const PATH_DRAWING_ANIMATION_DURATION = 3000
+
 const circleNotesData = Object.values(circleNotesDataByNote)
 const colorScale = d3.scaleLinear().domain([0, circleNotesData.length]).range(['blue', 'red'])
 const height = 500, width = 500
@@ -188,14 +192,15 @@ function updateVis() {
 	}
 	
 	// Transition to updated state
-	noteGroup.transition().duration(1000)
+	noteGroup.transition().duration(CIRCLE_OF_FOURTHS_TRANSITION_DURATION)
 	// .delay((d, i) => i * 50) // To coordinate w/ songPath, we'd need to transition to a NEW line for each point in the line
 		.attr("transform", d => `translate(${d.x},${d.y})`)
+	
 	
 	// If paths exists, transition it to this new state.
 	songPath
 		.transition()
-		.duration(1000)
+		.duration(CIRCLE_OF_FOURTHS_TRANSITION_DURATION)
 		.attrTween('d', function (d) { // SOURCE/PLUGIN: https://github.com/pbeshai/d3-interpolate-path
 			var previous = d3.select(this).attr('d');
 			var current = songPathGenerator(CHORD_ARRAY);
@@ -217,7 +222,7 @@ function runPathDrawingAnimation(songPath) {
 		.attr("stroke-dasharray", totalLength + " " + totalLength)
 		.attr("stroke-dashoffset", totalLength)
 		.transition()
-		.duration(2000)
+		.duration(PATH_DRAWING_ANIMATION_DURATION)
 		.ease(d3.easeLinear)
 		.attr("stroke-dashoffset", 0)
 }
