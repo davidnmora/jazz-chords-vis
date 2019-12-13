@@ -77,7 +77,7 @@ class ChordViz extends Object {
 			.classed('song-path', true)
 			.attr('fill', 'none')
 			.attr('stroke', COLORS.line)
-			.attr('stroke-width', 2)
+			.attr('stroke-width', 4)
 			.attr('stroke-opacity', 0.2)
 			.style('stroke-linecap','round')
 			.style("stroke-linejoin","round")
@@ -126,6 +126,8 @@ class ChordViz extends Object {
 	
 	toggleCircle() {
 		console.log('TOGGLING')
+		
+		this._updateCircleNotesData()
 		
 		this.indexType = this.indexType === 'chromaticIndex' ? 'fifthsIndex' : 'chromaticIndex'
 		this.toggleButton.html(this.indexType)
