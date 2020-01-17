@@ -113,7 +113,7 @@ class ChordViz extends Object {
 	
 	runPathDrawingAnimation() {
 		// https://observablehq.com/@lemonnish/svg-path-animations-d3-transition
-		var totalLength = this.songPath.node().getTotalLength();
+		const totalLength = this.songPath.node().getTotalLength();
 		
 		this.songPath
 			.attr("stroke-dasharray", totalLength + " " + totalLength)
@@ -125,14 +125,14 @@ class ChordViz extends Object {
 	}
 	
 	toggleCircle() {
-		console.log('TOGGLING')
+		// Update button
+		this.toggleButton.html(`Toggle to: ${this.indexType}`)
 		
-		this._updateCircleNotesData()
-		
+		// Toggle index
 		this.indexType = this.indexType === 'chromaticIndex' ? 'fifthsIndex' : 'chromaticIndex'
-		this.toggleButton.html(this.indexType)
 		
 		// Transition to updated state
+		this._updateCircleNotesData()
 		this.noteGroup.transition().duration(CIRCLE_OF_FOURTHS_TRANSITION_DURATION)
 		// .delay((d, i) => i * 50) // To coordinate w/ songPath, we'd need to transition to a NEW line for each point in the line
 			.attr("transform", d => `translate(${d.x},${d.y})`)
@@ -145,8 +145,8 @@ class ChordViz extends Object {
 			.transition()
 			.duration(CIRCLE_OF_FOURTHS_TRANSITION_DURATION)
 			.attrTween('d', function (d) { // SOURCE/PLUGIN: https://github.com/pbeshai/d3-interpolate-path
-				var previous = d3.select(this).attr('d');
-				var current = songPathGeneratorRef(chordArray_ref);
+				const previous = d3.select(this).attr('d');
+				const current = songPathGeneratorRef(chordArray_ref);
 				
 				return d3.interpolatePath(previous, current);
 			})
