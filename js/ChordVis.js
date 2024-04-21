@@ -19,8 +19,8 @@ const COLORS = {
   canvas: "#2c3e50",
 };
 
+const TRANSITION_DURATION_PER_CHORD = 200;
 const CIRCLE_OF_FOURTHS_TRANSITION_DURATION = 1000;
-const PATH_DRAWING_ANIMATION_DURATION = 3000;
 
 const CIRCLE_NOTES_DATA = Object.values(CIRCLE_NOTES_DATA_BY_NOTE);
 const COLOR_SCALE = d3
@@ -149,7 +149,7 @@ class ChordViz extends Object {
       .attr("stroke-dasharray", totalLength + " " + totalLength)
       .attr("stroke-dashoffset", totalLength)
       .transition()
-      .duration(PATH_DRAWING_ANIMATION_DURATION)
+      .duration(this.chordArray.length * TRANSITION_DURATION_PER_CHORD)
       .ease(d3.easeLinear)
       .attr("stroke-dashoffset", 0);
   }
